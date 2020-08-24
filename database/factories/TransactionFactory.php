@@ -8,6 +8,10 @@ use App\User;
 use Faker\Generator as Faker;
 
 $factory->define(Transaction::class, function (Faker $faker) {
+    /*here for the product id, at first we found  a sellert with a product , then we picked a product from that seller.
+    we could take a product directly.But we did it in this way just because a product cannot be sold and bought a same user.
+    
+    */
 
     $seller = Seller::has('products')->get()->random();
     $buyer = User::all()->except($seller->id)->random();

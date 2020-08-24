@@ -18,12 +18,14 @@ class DatabaseSeeder extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
+        //deleting all the data of all tables
         User::truncate();
         Category::truncate();
         Product::truncate();
         Transaction::truncate();
         DB::table('category_product')->truncate();
 
+        //specifying how much data we want to create
         $userQuantity = 200;
         $categoryQuantity = 30;
         $productQuantity = 1000;
@@ -31,9 +33,11 @@ class DatabaseSeeder extends Seeder
 
         factory(User::class, $userQuantity)->create();
         factory(Category::class,$categoryQuantity)->create();
+
         factory(Product::class,$productQuantity)->create()->each(
+            /*for each product, first we are taking a random number, then taking that much categories and assigining to this product. */
             function($product){
-                $categories = Category::all()->random(mt_rand(1,5))->pluck('id');
+                $categories = Category::all()->random(mt_rand(1,5))->pluck('id');//mt_rand generates a value from 1 to 5
                 $product ->categories()->attach($categories);
             });
 
