@@ -53,6 +53,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    //mutator to change all the names to lowercase before saving on database
+    public function setNameAttribute($name)
+    {
+        $this->attributes['name'] = strtolower($name);
+    }
+
+    //accessor to make the first letter of every word of name to uppercase after getting from database
+    public function getNameAttribute($name)
+    {
+        return ucwords($name);
+    }
+
+    //mutators for email
+    public function setEmailAttribute($email)
+    {
+        $this->attributes['email'] = strtolower($email);
+    }
+    
     public function isVerified()
     {
         return $this->verified ==User::VERIFIED_USER;
