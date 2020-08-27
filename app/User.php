@@ -4,13 +4,14 @@ namespace App;
 
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable,SoftDeletes;
 
     const VERIFIED_USER = '1';
     const UNERIFIED_USER = '0';
@@ -53,6 +54,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $dates = ['deleted_at'];
+
     //mutator to change all the names to lowercase before saving on database
     public function setNameAttribute($name)
     {
@@ -70,7 +73,7 @@ class User extends Authenticatable
     {
         $this->attributes['email'] = strtolower($email);
     }
-    
+
     public function isVerified()
     {
         return $this->verified ==User::VERIFIED_USER;
