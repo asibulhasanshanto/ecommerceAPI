@@ -6,6 +6,7 @@ use App\Buyer;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BuyerProductController extends ApiController
@@ -17,9 +18,9 @@ class BuyerProductController extends ApiController
      */
     public function index(Buyer $buyer)
     {
-        $products = $buyer->transactions()->with('product')->map(function($item) { return $item->pluck('product'); });
+        $products = $buyer->transactions()->with('product')->get()->pluck('product');
 
-
+        // return response()->json($products, 200);
         return $this->showAll($products);
     }
 }
