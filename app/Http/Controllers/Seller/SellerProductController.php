@@ -8,6 +8,7 @@ use App\Product;
 use App\Seller;
 use App\User;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SellerProductController extends ApiController
 {
@@ -60,9 +61,41 @@ class SellerProductController extends ApiController
      * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Seller $seller)
+    public function update(Request $request, Seller $seller,Product $product)
     {
-        //
+        $rules = [
+            'quantity'=> 'integer|min:1',
+            'status' => 'in: '.Product::AVAILABLE_PRODUCT. ' , ' .Product::UNAVAILABLE_PRODUCT,
+            'image' => 'image'
+        ];
+        $this->validate($request,$rules);
+
+        //check if the seller is owner of this product
+        $this->checkSeller($seller,$product);
+
+        //filling data from request
+        $product->fill($request->only([
+            'name',
+            'description',
+            'quantity'
+        ]));
+
+        //updating status of a product
+        if($request->has('status'))
+        {
+            $product->status = $request->status;
+            if($product->isAvailable() && $product->categories()->count()==0)
+            {
+                return $this->errorResponse('An active product must have at least one category',409);
+            }
+        }
+        //checking if anything is updated or not
+        if($product->isClean())
+        {
+            return $this->errorResponse('You need to specify a different value to update',422);
+        }
+        $product->save();
+        return $this->showOne($product);
     }
 
     /**
@@ -71,8 +104,18 @@ class SellerProductController extends ApiController
      * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Seller $seller)
+    public function destroy(Seller $seller,Product $product)
     {
-        //
+        $this->checkSeller($seller,$product);
+        $product->delete();
+
+        return $this->showOne($product);
+    }
+    protected function checkSeller(Seller $seller,Product $product)
+    {
+        if($seller->id != $product->seller_id)
+        {
+            throw new HttpException(422,'the specified seller is not the seller of this product');
+        }
     }
 }
