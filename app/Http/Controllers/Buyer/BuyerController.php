@@ -30,7 +30,6 @@ class BuyerController extends ApiController
     public function show(Buyer $buyer)
     {
         return $this->showOne($buyer);
-
     }
 
 }

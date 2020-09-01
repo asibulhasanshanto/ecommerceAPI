@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             /*for each product, first we are taking a random number, then taking that much categories and assigining to this product. */
             function($product){
                 $categories = Category::all()->random(mt_rand(1,5))->pluck('id');//mt_rand generates a value from 1 to 5
+                /*attaching 1 to 5 categories with every product. In general word, feeding data to the pivot table */
                 $product ->categories()->attach($categories);
             });
 
