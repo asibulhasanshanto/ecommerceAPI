@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Buyer;
 use App\Product;
+use App\Transformers\TransactionTransformer;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
@@ -16,7 +17,7 @@ class Transaction extends Model
         'product_id'
     ];
     protected $dates = ['deleted_at'];
-
+    public $transformer = TransactionTransformer::class;
     public function buyer()
     {
         return $this->belongsTo(Buyer::class);
