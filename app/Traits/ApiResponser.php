@@ -2,8 +2,11 @@
 
 namespace App\Traits;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator as PaginationLengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
 use League\CommonMark\Inline\Element\Code;
 
 trait ApiResponser
@@ -24,6 +27,7 @@ trait ApiResponser
         $transformer = $collection->first()->transformer;
         $collection = $this->filterData($collection, $transformer);
         $collection = $this->sortData($collection, $transformer);
+        $collection = $this->paginate($collection);
         $collection = $this->transformData($collection, $transformer);
         return $this->successResponse($collection, $code);
     }
@@ -61,5 +65,27 @@ trait ApiResponser
     {
         $transformation = fractal($data, new $transformer);
         return $transformation->toArray();
+    }
+    protected function paginate(Collection $collection)
+    {
+        $rules = [
+            'per_page'=>'integer|min:2|max:50',
+        ];
+        Validator::validate(request()->all(),$rules);
+
+        $page = PaginationLengthAwarePaginator::resolveCurrentPage();
+        $perPage = 15;
+        if(request()->has('per_page'))
+        {
+            $perPage = request()->per_page;
+        }
+
+        $results = $collection->slice(($page-1)* $perPage,$perPage)->values();
+        $paginated = new PaginationLengthAwarePaginator($results,$collection->count(),$perPage,$page,[
+            'path'=> PaginationLengthAwarePaginator::resolveCurrentPath(),
+        ]);
+
+        $paginated->appends(request()->all());
+        return $paginated;
     }
 }
