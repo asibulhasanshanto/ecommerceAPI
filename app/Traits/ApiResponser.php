@@ -6,8 +6,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator as PaginationLengthAwarePaginator;
+use Illuminate\Support\Facades\Cache as FacadesCache;
 use Illuminate\Support\Facades\Validator;
-use League\CommonMark\Inline\Element\Code;
 
 trait ApiResponser
 {
@@ -29,6 +29,7 @@ trait ApiResponser
         $collection = $this->sortData($collection, $transformer);
         $collection = $this->paginate($collection);
         $collection = $this->transformData($collection, $transformer);
+        $collection = $this->CacheResponse($collection);
         return $this->successResponse($collection, $code);
     }
     protected function showOne(Model $model, $code = 200)
@@ -69,23 +70,36 @@ trait ApiResponser
     protected function paginate(Collection $collection)
     {
         $rules = [
-            'per_page'=>'integer|min:2|max:50',
+            'per_page' => 'integer|min:2|max:50',
         ];
-        Validator::validate(request()->all(),$rules);
+        Validator::validate(request()->all(), $rules);
 
         $page = PaginationLengthAwarePaginator::resolveCurrentPage();
         $perPage = 15;
-        if(request()->has('per_page'))
-        {
+        if (request()->has('per_page')) {
             $perPage = request()->per_page;
         }
 
-        $results = $collection->slice(($page-1)* $perPage,$perPage)->values();
-        $paginated = new PaginationLengthAwarePaginator($results,$collection->count(),$perPage,$page,[
-            'path'=> PaginationLengthAwarePaginator::resolveCurrentPath(),
+        $results = $collection->slice(($page - 1) * $perPage, $perPage)->values();
+        $paginated = new PaginationLengthAwarePaginator($results, $collection->count(), $perPage, $page, [
+            'path' => PaginationLengthAwarePaginator::resolveCurrentPath(),
         ]);
 
         $paginated->appends(request()->all());
         return $paginated;
+    }
+    protected function CacheResponse($data)
+    {
+        $url = request()->url();
+        $queryParams = request()->query();
+        ksort($queryParams);
+
+        $queryString = http_build_query($queryParams);
+
+        $fullUrl = "{$url}?{$queryString}";
+
+        return FacadesCache::remember($fullUrl, 30 / 60, function () use ($data) {
+            return $data;
+        });
     }
 }
