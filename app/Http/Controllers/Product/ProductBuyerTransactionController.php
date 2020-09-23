@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Seller;
 use App\Transaction;
+use App\Transformers\ProductTransformer;
 use App\User;
 use Facade\FlareClient\Api;
 use Illuminate\Http\Request;
@@ -15,6 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class ProductBuyerTransactionController extends ApiController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->middleware('transform.input:'. ProductTransformer::class)->only(['store']);
+    }
 
     /**
      * Store a newly created resource in storage.

@@ -69,7 +69,7 @@ class TransactionTransformer extends TransformerAbstract
 
     public static function originalAttribute($index)
     {
-        $attributes= [
+        $attributes = [
             'identifier' => 'id',
             'quantity' => 'quantity',
             'buyer' => 'buyer_id',
@@ -78,6 +78,21 @@ class TransactionTransformer extends TransformerAbstract
             'lastChanged' => 'updated_at',
             'deletedDate' => 'deleted_at',
         ];
-        return isset($attributes[$index])? $attributes[$index] : null;
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
+    //this function is to change the feild of responses while posting or updating
+    public static function transformedAttribute($index)
+    {
+        $attributes = [
+            'id' => 'identifier',
+            'quantity' => 'quantity',
+            'buyer_id' => 'buyer',
+            'product_id' => 'product',
+            'created_at' => 'creationDate',
+            'updated_at' => 'lastChanged',
+            'deleted_at' => 'deletedDate',
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
     }
 }
