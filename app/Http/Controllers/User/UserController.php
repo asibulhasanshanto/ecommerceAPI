@@ -29,6 +29,8 @@ class UserController extends ApiController
      */
     public function index()
     {
+        $this->allowedAdminAction();
+
         $users = User::all();
 
         return $this->showAll($users);
@@ -100,6 +102,9 @@ class UserController extends ApiController
             $user->password = bcrypt($request->password);
         }
         if ($request->has('admin')) {
+            //only an admin user can change the admin field of an user.
+            $this->allowedAdminAction();
+
             if (!$user->isVerified()) {
                 return $this->errorResponse('Only verified users can modify the admin field', 409);
             }

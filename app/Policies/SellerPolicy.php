@@ -2,13 +2,14 @@
 
 namespace App\Policies;
 
+use AdminActions;
 use App\Seller;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SellerPolicy
 {
-    use HandlesAuthorization;
+    use HandlesAuthorization,AdminActions;
 
 
     /**
