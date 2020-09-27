@@ -61,6 +61,7 @@ Route::resource('transactions.sellers', 'Transaction\TransactionSellerController
 /*
 Users
 */
+Route::get('users/me', 'User\UserController@me')->name('me');
 Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]);
 
 /*verifying mail token */
