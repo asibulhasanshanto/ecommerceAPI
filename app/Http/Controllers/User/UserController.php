@@ -48,17 +48,16 @@ class UserController extends ApiController
         $rules = [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed'
+            'password' => ['required', 'string', 'min:8', 'confirmed']
         ];
+        // dd($request->password_confirmation);
         $this->validate($request, $rules);
         $data = $request->all();
         $data['password'] = bcrypt($request->password);
         $data['verified'] = User::UNERIFIED_USER;
         $data['verification_token'] = User::generateVerificationCode();
         $data['admin'] = User::REGULAR_USER;
-
         $user = User::create($data);
-
         return $this->showOne($user, 201);
     }
 
@@ -133,7 +132,8 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
-    public function me(Request $request){
+    public function me(Request $request)
+    {
         $user = $request->user();
         return $this->showOne($user);
     }
