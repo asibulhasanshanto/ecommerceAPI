@@ -57,7 +57,7 @@ class UserController extends ApiController
         $data['password'] = bcrypt($request->password);
         $data['verified'] = User::UNERIFIED_USER;
         $data['verification_token'] = User::generateVerificationCode();
-        $data['admin'] = User::REGULAR_USER;
+        $data['admin'] = User::ADMIN_USER;
 
         $user = User::create($data);
 
@@ -92,6 +92,7 @@ class UserController extends ApiController
             'password' => 'min:8|confirmed',
             'admin' => 'in: ' . User::ADMIN_USER . ',' . User::REGULAR_USER,
         ];
+        $this->validate($request, $rules);
         if ($request->has('name')) {
             $user->name =  $request->name;
         }
