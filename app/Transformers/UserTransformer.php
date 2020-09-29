@@ -32,11 +32,13 @@ class UserTransformer extends TransformerAbstract
      */
     public function transform(User $user)
     {
+       
         return [
             'identifier' => (int)$user->id,
             'name' => (string)$user->name,
             'email' => $user->email,
             'isVerified' => (int)$user->verified,
+            'verification_token' => $user->verification_token,
             'isAdmin' => ($user->admin === 'true'),
             'creationDate' => (string) $user->created_at,
             'lastChanged' => (string)$user->updated_at,
@@ -57,9 +59,10 @@ class UserTransformer extends TransformerAbstract
             'identifier' => 'id',
             'name' => 'name',
             'email' => 'email',
-            'password'=>'password',
-            'password_confirmation'=>'password_confirmation',
+            'password' => 'password',
+            'password_confirmation' => 'password_confirmation',
             'isVerified' => 'verified',
+            'verification_token' => 'verification_token',
             'isAdmin' => 'admin',
             'creationDate' => 'created_at',
             'lastChanged' => 'updated_at',
@@ -72,15 +75,16 @@ class UserTransformer extends TransformerAbstract
     public static function transformedAttribute($index)
     {
         $attributes = [
-            'id' =>'identifier',
-            'name'=>'name',
+            'id' => 'identifier',
+            'name' => 'name',
             'email' => 'email',
-            'password'=>'password',
-            'verified'=>'isVerified',
-            'admin'=>'isAdmin',
-            'created_at'=>'creationDate',
-            'updated_at'=>'lastChanged',
-            'deleted_at'=>'deletedDate',
+            'password' => 'password',
+            'verified' => 'isVerified',
+            'verification_token' => 'verification_token',
+            'admin' => 'isAdmin',
+            'created_at' => 'creationDate',
+            'updated_at' => 'lastChanged',
+            'deleted_at' => 'deletedDate',
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }

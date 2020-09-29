@@ -6,7 +6,7 @@ use App\Traits\ApiResponser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate as FacadesGate;
 
-class ApiController extends Controller
+class ApiController extends Controller 
 {
     use ApiResponser;
     public function __construct()

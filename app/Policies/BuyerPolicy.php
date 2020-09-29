@@ -9,7 +9,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BuyerPolicy
 {
-    use HandlesAuthorization,AdminActions;
+    use HandlesAuthorization, AdminActions;
 
     /**
      * Determine whether the user can view the model.

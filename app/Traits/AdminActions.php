@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Traits;
+
 trait AdminActions
 {
     //checking if the current user is an admin or not.

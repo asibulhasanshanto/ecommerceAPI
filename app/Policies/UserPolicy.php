@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use AdminActions;
+use App\Traits\AdminActions;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
